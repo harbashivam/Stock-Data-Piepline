@@ -1,47 +1,47 @@
-┌────────────────────────────┐
-│  Stock APIs / CSV / JSON   │
-└────────────────────────────┘
-             │
-             ▼
-┌────────────────────────────┐
-│      Bronze Layer          │
-│    Raw Delta in ADLS       │
-└────────────────────────────┘
-             │
-             ▼
-┌────────────────────────────┐
-│      Silver Layer          │
-│  • Remove duplicates &     │
-│    missing values          │
-│  • Standardize columns &   │
-│    data types              │
-│  • Add derived columns:    │
-│    year, month, week       │
-└────────────────────────────┘
-             │
-             ▼
-┌────────────────────────────┐
-│       Gold Layer           │
-│  • Daily, weekly, monthly  │
-│    aggregations            │
-│  • avg_close, max_high,    │
-│    min_low                 │
-│  • KPI ready for dashboards│
-└────────────────────────────┘
-             │
-             ▼
-┌────────────────────────────┐
-│       Delta Table          │
-│  • Optimized for fast      │
-│    queries                 │
-│  • Partitioned by symbol & │
-│    date                    │
-└────────────────────────────┘
-             │
-             ▼
-┌────────────────────────────┐
-│   Databricks Dashboards    │
-└────────────────────────────┘
+                  ┌────────────────────────────┐
+                  │  Stock APIs / CSV / JSON   │
+                  └────────────────────────────┘
+                               │
+                               ▼
+                  ┌────────────────────────────┐
+                  │      Bronze Layer          │
+                  │    Raw Delta in ADLS       │
+                  └────────────────────────────┘
+                               │
+                               ▼
+                  ┌────────────────────────────┐
+                  │      Silver Layer          │
+                  │  • Remove duplicates &     │
+                  │    missing values          │
+                  │  • Standardize columns &   │
+                  │    data types              │
+                  │  • Add derived columns:    │
+                  │    year, month, week       │
+                  └────────────────────────────┘
+                               │
+                               ▼
+                  ┌────────────────────────────┐
+                  │       Gold Layer           │
+                  │  • Daily, weekly, monthly  │
+                  │    aggregations            │
+                  │  • avg_close, max_high,    │
+                  │    min_low                 │
+                  │  • KPI ready for dashboards│
+                  └────────────────────────────┘
+                               │
+                               ▼
+                  ┌────────────────────────────┐
+                  │       Delta Table          │
+                  │  • Optimized for fast      │
+                  │    queries                 │
+                  │  • Partitioned by symbol & │
+                  │    date                    │
+                  └────────────────────────────┘
+                               │
+                               ▼
+                  ┌────────────────────────────┐
+                  │   Databricks Dashboards    │
+                  └────────────────────────────┘
 
 
 
