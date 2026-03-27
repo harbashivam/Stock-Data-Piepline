@@ -6,6 +6,8 @@ This project implements a multi-layered stock data pipeline using Databricks, Py
 The pipeline follows a Bronze → Silver → Gold architecture:
 
 Pipeline Architecture
+               
+              
               ┌────────────────────────────┐
               │  Stock APIs / CSV / JSON   │
               └────────────────────────────┘
@@ -50,7 +52,6 @@ Pipeline Architecture
               ┌────────────────────────────┐
               │   Databricks Dashboards    │
               └────────────────────────────┘
-
               
 Layer Details
 
