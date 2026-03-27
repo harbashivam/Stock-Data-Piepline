@@ -1,0 +1,2316 @@
+{
+  "datasets": [
+    {
+      "name": "8fba07e7",
+      "displayName": "Gold Daily Turnover",
+      "queryLines": [
+        "SELECT\n",
+        "  Date,\n",
+        "  Turnover_cr\n",
+        "FROM\n",
+        "  gold_table\n",
+        "ORDER BY\n",
+        "  Date"
+      ],
+      "catalog": "gold_catalog",
+      "schema": "gold_schema"
+    },
+    {
+      "name": "c5c49ff5",
+      "displayName": "gold_table",
+      "queryLines": [
+        "SELECT * FROM gold_catalog.gold_schema.gold_table"
+      ],
+      "columns": [
+        {
+          "displayName": "Price Spread",
+          "description": "Daily price spread: High minus Low",
+          "expression": "`High` - `Low`"
+        },
+        {
+          "displayName": "Avg Price",
+          "description": "Average of Open, High, Low, Close",
+          "expression": "ROUND((`Open` + `High` + `Low` + `Close`) / 4, 2)"
+        }
+      ]
+    },
+    {
+      "name": "27ee08ca",
+      "displayName": "Monthly Avg Gold Prices",
+      "queryLines": [
+        "SELECT\n",
+        "  DATE_TRUNC('month', Date) AS Month,\n",
+        "  AVG(Open) AS Avg_Open,\n",
+        "  AVG(High) AS Avg_High,\n",
+        "  AVG(Low) AS Avg_Low,\n",
+        "  AVG(Close) AS Avg_Close,\n",
+        "  AVG(shares_traded) AS Avg_Shares_Traded,\n",
+        "  AVG(Turnover_cr) AS Avg_Turnover_Cr\n",
+        "FROM\n",
+        "  gold_catalog.gold_schema.gold_table\n",
+        "GROUP BY\n",
+        "  DATE_TRUNC('month', Date)\n",
+        "ORDER BY\n",
+        "  Month"
+      ]
+    },
+    {
+      "name": "fcd410c2",
+      "displayName": "Gold Daily % Change",
+      "queryLines": [
+        "SELECT\n",
+        "  Date,\n",
+        "  Close,\n",
+        "  ROUND(\n",
+        "    (Close - LAG(Close) OVER (ORDER BY Date)) / LAG(Close) OVER (ORDER BY Date) * 100,\n",
+        "    2\n",
+        "  ) AS pct_change\n",
+        "FROM\n",
+        "  gold_catalog.gold_schema.gold_table\n",
+        "ORDER BY\n",
+        "  Date"
+      ]
+    },
+    {
+      "name": "ef7d0491",
+      "displayName": "Weekly OHLC",
+      "queryLines": [
+        "SELECT\n",
+        "  date_trunc('week', Date) AS week,\n",
+        "  FIRST(Open) AS week_open,\n",
+        "  MAX(High) AS week_high,\n",
+        "  MIN(Low) AS week_low,\n",
+        "  LAST(Close) AS week_close\n",
+        "FROM\n",
+        "  gold_catalog.gold_schema.gold_table\n",
+        "GROUP BY\n",
+        "  date_trunc('week', Date)\n",
+        "ORDER BY\n",
+        "  week"
+      ]
+    },
+    {
+      "name": "326798d2",
+      "displayName": "Weekly Volume",
+      "queryLines": [
+        "SELECT\n",
+        "  date_trunc('week', Date) AS week,\n",
+        "  SUM(shares_traded) AS total_volume\n",
+        "FROM\n",
+        "  gold_catalog.gold_schema.gold_table\n",
+        "GROUP BY\n",
+        "  date_trunc('week', Date)\n",
+        "ORDER BY\n",
+        "  week"
+      ]
+    },
+    {
+      "name": "68aea563",
+      "displayName": "Weekly Turnover",
+      "queryLines": [
+        "SELECT\n",
+        "  date_trunc('week', Date) AS week,\n",
+        "  SUM(Turnover_cr) AS total_turnover\n",
+        "FROM\n",
+        "  gold_catalog.gold_schema.gold_table\n",
+        "GROUP BY\n",
+        "  date_trunc('week', Date)\n",
+        "ORDER BY\n",
+        "  week"
+      ]
+    },
+    {
+      "name": "adfaeecd",
+      "displayName": "Weekly Avg Close",
+      "queryLines": [
+        "SELECT\n",
+        "  date_trunc('week', Date) AS week,\n",
+        "  ROUND(AVG(Close), 2) AS avg_close\n",
+        "FROM\n",
+        "  gold_catalog.gold_schema.gold_table\n",
+        "GROUP BY\n",
+        "  date_trunc('week', Date)\n",
+        "ORDER BY\n",
+        "  week"
+      ]
+    },
+    {
+      "name": "e105599d",
+      "displayName": "Monthly OHLC",
+      "queryLines": [
+        "SELECT\n",
+        "  date_trunc('month', Date) AS month,\n",
+        "  FIRST(Open) AS month_open,\n",
+        "  MAX(High) AS month_high,\n",
+        "  MIN(Low) AS month_low,\n",
+        "  LAST(Close) AS month_close\n",
+        "FROM\n",
+        "  gold_catalog.gold_schema.gold_table\n",
+        "GROUP BY\n",
+        "  date_trunc('month', Date)\n",
+        "ORDER BY\n",
+        "  month"
+      ]
+    },
+    {
+      "name": "655685df",
+      "displayName": "Monthly Volume",
+      "queryLines": [
+        "SELECT\n",
+        "  date_trunc('month', Date) AS month,\n",
+        "  SUM(shares_traded) AS total_volume\n",
+        "FROM\n",
+        "  gold_catalog.gold_schema.gold_table\n",
+        "GROUP BY\n",
+        "  date_trunc('month', Date)\n",
+        "ORDER BY\n",
+        "  month"
+      ]
+    },
+    {
+      "name": "3d56ff4d",
+      "displayName": "Latest 10 Days Summary",
+      "queryLines": [
+        "SELECT\n",
+        "  Date,\n",
+        "  Open,\n",
+        "  High,\n",
+        "  Low,\n",
+        "  Close,\n",
+        "  shares_traded AS Volume,\n",
+        "  Turnover_cr AS Turnover,\n",
+        "  (Open + High + Low + Close) / 4 AS Avg_Price\n",
+        "FROM\n",
+        "  gold_table\n",
+        "ORDER BY\n",
+        "  Date DESC\n",
+        "LIMIT 10"
+      ],
+      "catalog": "gold_catalog",
+      "schema": "gold_schema"
+    },
+    {
+      "name": "ee48affd",
+      "displayName": "gold_nifty",
+      "queryLines": [
+        "SELECT * FROM nifty_catalog.nifty_schema.gold_nifty"
+      ]
+    },
+    {
+      "name": "49627663",
+      "displayName": "Nifty Daily Summary",
+      "queryLines": [
+        "SELECT\n",
+        "  date,\n",
+        "  symbol,\n",
+        "  open,\n",
+        "  high,\n",
+        "  low,\n",
+        "  close,\n",
+        "  volume\n",
+        "FROM\n",
+        "  silver_data\n",
+        "WHERE\n",
+        "  symbol = :symbol_param\n",
+        "ORDER BY\n",
+        "  date DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Symbol",
+          "keyword": "symbol_param",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "RELIANCE"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "catalog": "nifty_catalog",
+      "schema": "nifty_schema"
+    },
+    {
+      "name": "caa778de",
+      "displayName": "Nifty Yearly OHLC",
+      "queryLines": [
+        "SELECT\n",
+        "  year(date) AS year,\n",
+        "  symbol,\n",
+        "  FIRST(open) AS year_open,\n",
+        "  MAX(high) AS year_high,\n",
+        "  MIN(low) AS year_low,\n",
+        "  LAST(close) AS year_close,\n",
+        "  SUM(volume) AS total_volume\n",
+        "FROM\n",
+        "  silver_data\n",
+        "WHERE\n",
+        "  symbol = :symbol_param\n",
+        "GROUP BY\n",
+        "  year(date),\n",
+        "  symbol\n",
+        "ORDER BY\n",
+        "  year DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Symbol",
+          "keyword": "symbol_param",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "RELIANCE"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "catalog": "nifty_catalog",
+      "schema": "nifty_schema"
+    },
+    {
+      "name": "e6e329fb",
+      "displayName": "Nifty Yearly Avg OHLC",
+      "queryLines": [
+        "SELECT\n",
+        "  year(date) AS year,\n",
+        "  symbol,\n",
+        "  AVG(open) AS avg_open,\n",
+        "  AVG(high) AS avg_high,\n",
+        "  AVG(low) AS avg_low,\n",
+        "  AVG(close) AS avg_close,\n",
+        "  SUM(volume) AS total_volume\n",
+        "FROM\n",
+        "  silver_data\n",
+        "WHERE\n",
+        "  symbol = :symbol_param\n",
+        "GROUP BY\n",
+        "  year(date),\n",
+        "  symbol\n",
+        "ORDER BY\n",
+        "  year DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Symbol",
+          "keyword": "symbol_param",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "RELIANCE"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "catalog": "nifty_catalog",
+      "schema": "nifty_schema"
+    },
+    {
+      "name": "c1eba5fa",
+      "displayName": "Nifty Weekly OHLC",
+      "queryLines": [
+        "SELECT\n",
+        "  year(date) AS year,\n",
+        "  weekofyear(date) AS week,\n",
+        "  symbol,\n",
+        "  FIRST(open) AS week_open,\n",
+        "  MAX(high) AS week_high,\n",
+        "  MIN(low) AS week_low,\n",
+        "  LAST(close) AS week_close,\n",
+        "  SUM(volume) AS week_volume,\n",
+        "  AVG(close) AS avg_week_close\n",
+        "FROM\n",
+        "  silver_data\n",
+        "WHERE\n",
+        "  symbol = :symbol_param\n",
+        "GROUP BY\n",
+        "  year(date),\n",
+        "  weekofyear(date),\n",
+        "  symbol\n",
+        "ORDER BY\n",
+        "  year DESC,\n",
+        "  week DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Symbol",
+          "keyword": "symbol_param",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "RELIANCE"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "catalog": "nifty_catalog",
+      "schema": "nifty_schema"
+    },
+    {
+      "name": "21c03390",
+      "displayName": "Untitled dataset",
+      "queryLines": [
+        "SELECT\n",
+        "    date,\n",
+        "    close,\n",
+        "    volume\n",
+        "FROM nifty_catalog.nifty_schema.gold_nifty\n",
+        "WHERE symbol = '${symbol_param}'\n",
+        "ORDER BY date;"
+      ],
+      "parameters": [
+        {
+          "displayName": "symbol_param",
+          "keyword": "symbol_param",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "RELIANCE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "e593ddcb",
+      "displayName": "Untitled dataset - symbol_param domain",
+      "queryLines": [
+        "FROM ( VALUES ('RELIANCE'), ('TCS'), ('INFY'), ('HDFCBANK'), ('ICICIBANK'), ('SBIN'), ('ITC'), ('LT') ) AS domain(values) SELECT values"
+      ]
+    },
+    {
+      "name": "d3d02cfc",
+      "displayName": "Nifty Symbol Daily Data",
+      "queryLines": [
+        "SELECT\n",
+        "  date,\n",
+        "  symbol,\n",
+        "  open,\n",
+        "  high,\n",
+        "  low,\n",
+        "  close,\n",
+        "  volume\n",
+        "FROM\n",
+        "  nifty_catalog.nifty_schema.gold_nifty\n",
+        "WHERE\n",
+        "  symbol = '${symbol_param}'\n",
+        "ORDER BY\n",
+        "  date"
+      ]
+    },
+    {
+      "name": "5721b558",
+      "displayName": "Nifty Weekly Avg Price",
+      "queryLines": [
+        "SELECT\n",
+        "  concat(year(date), '-W', weekofyear(date)) AS year_week,\n",
+        "  symbol,\n",
+        "  AVG(close) AS avg_week_price,\n",
+        "  SUM(volume) AS week_volume\n",
+        "FROM\n",
+        "  nifty_catalog.nifty_schema.gold_nifty\n",
+        "WHERE\n",
+        "  symbol = '${symbol_param}'\n",
+        "GROUP BY\n",
+        "  year(date),\n",
+        "  weekofyear(date),\n",
+        "  symbol\n",
+        "ORDER BY\n",
+        "  year_week"
+      ]
+    },
+    {
+      "name": "a83da13f",
+      "displayName": "Nifty Monthly OHLC",
+      "queryLines": [
+        "SELECT\n",
+        "  concat(year(date), '-', lpad(month(date), 2, '0')) AS symbol_month,\n",
+        "  symbol,\n",
+        "  MIN_BY(open, date) AS month_open,\n",
+        "  MAX(high) AS month_high,\n",
+        "  MIN(low) AS month_low,\n",
+        "  MAX_BY(close, date) AS month_close,\n",
+        "  SUM(volume) AS month_volume\n",
+        "FROM\n",
+        "  nifty_catalog.nifty_schema.gold_nifty\n",
+        "WHERE\n",
+        "  symbol = :symbol_param\n",
+        "GROUP BY\n",
+        "  year(date),\n",
+        "  month(date),\n",
+        "  symbol\n",
+        "ORDER BY\n",
+        "  year(date),\n",
+        "  month(date)"
+      ],
+      "parameters": [
+        {
+          "displayName": "Symbol",
+          "keyword": "symbol_param",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "RELIANCE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "50c9496a",
+      "displayName": "Nifty Monthly Avg Close",
+      "queryLines": [
+        "SELECT\n",
+        "  concat(year(date), '-', lpad(month(date), 2, '0')) AS year_month,\n",
+        "  symbol,\n",
+        "  AVG(close) AS avg_month_close,\n",
+        "  MAX(high) AS month_high,\n",
+        "  MIN(low) AS month_low,\n",
+        "  SUM(volume) AS month_volume\n",
+        "FROM\n",
+        "  nifty_catalog.nifty_schema.gold_nifty\n",
+        "WHERE\n",
+        "  symbol = :symbol_param\n",
+        "GROUP BY\n",
+        "  year(date),\n",
+        "  month(date),\n",
+        "  symbol\n",
+        "ORDER BY\n",
+        "  year_month"
+      ],
+      "parameters": [
+        {
+          "displayName": "Symbol",
+          "keyword": "symbol_param",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "RELIANCE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4d42e78c",
+      "displayName": "Nifty Symbol Summary",
+      "queryLines": [
+        "SELECT\n",
+        "  symbol,\n",
+        "  AVG(close) AS avg_price,\n",
+        "  MAX(high) AS highest_price,\n",
+        "  MIN(low) AS lowest_price,\n",
+        "  SUM(volume) AS total_traded_volume\n",
+        "FROM\n",
+        "  nifty_catalog.nifty_schema.gold_nifty\n",
+        "WHERE\n",
+        "  upper(symbol) = upper('${symbol_param}')\n",
+        "GROUP BY\n",
+        "  symbol"
+      ]
+    },
+    {
+      "name": "804000f7",
+      "displayName": "Nifty Monthly Stats",
+      "queryLines": [
+        "SELECT\n",
+        "  symbol,\n",
+        "  DATE_TRUNC('month', date) AS month,\n",
+        "  AVG(close) AS avg_close_price,\n",
+        "  MAX(high) AS max_price,\n",
+        "  MIN(low) AS min_price,\n",
+        "  SUM(volume) AS total_volume\n",
+        "FROM\n",
+        "  nifty_catalog.nifty_schema.gold_nifty\n",
+        "WHERE\n",
+        "  symbol = '${symbol_param}'\n",
+        "GROUP BY\n",
+        "  symbol,\n",
+        "  DATE_TRUNC('month', date)\n",
+        "ORDER BY\n",
+        "  month"
+      ]
+    },
+    {
+      "name": "cccefeb6",
+      "displayName": "gold_nifty",
+      "queryLines": [
+        "SELECT * FROM nifty_catalog.nifty_schema.gold_nifty"
+      ]
+    },
+    {
+      "name": "9d5789b5",
+      "displayName": "Nifty Daily Stats by Symbol",
+      "queryLines": [
+        "SELECT\n",
+        "  symbol,\n",
+        "  date,\n",
+        "  AVG(close) AS avg_close_price,\n",
+        "  MAX(high) AS max_price,\n",
+        "  MIN(low) AS min_price,\n",
+        "  SUM(volume) AS total_volume\n",
+        "FROM\n",
+        "  nifty_catalog.nifty_schema.gold_nifty\n",
+        "WHERE\n",
+        "  symbol = :symbol_param\n",
+        "GROUP BY\n",
+        "  symbol,\n",
+        "  date\n",
+        "ORDER BY\n",
+        "  date"
+      ],
+      "parameters": [
+        {
+          "displayName": "Symbol",
+          "keyword": "symbol_param",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "RELIANCE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "6eeaf6f3",
+      "displayName": "Daily Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "c263619e",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c5c49ff5",
+                  "fields": [
+                    {
+                      "name": "Close",
+                      "expression": "`Close`"
+                    },
+                    {
+                      "name": "Date",
+                      "expression": "`Date`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Daily OHLC Prices",
+                "showTitle": true
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "Close",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Close"
+                },
+                "color": {
+                  "fieldName": "Date",
+                  "displayName": "Date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "ee6dfd6f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c5c49ff5",
+                  "fields": [
+                    {
+                      "name": "Date",
+                      "expression": "`Date`"
+                    },
+                    {
+                      "name": "shares_traded",
+                      "expression": "`shares_traded`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "frame": {
+                "title": "Daily Shares Traded ",
+                "showTitle": true
+              },
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "Date",
+                  "displayName": "Date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "shares_traded",
+                        "displayName": "Shares Traded"
+                      }
+                    ]
+                  },
+                  "secondary": {
+                    "fields": []
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 11,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "5034958c",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fcd410c2",
+                  "fields": [
+                    {
+                      "name": "Date",
+                      "expression": "`Date`"
+                    },
+                    {
+                      "name": "pct_change",
+                      "expression": "`pct_change`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Daily % Change",
+                "showTitle": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "Date",
+                  "displayName": "Date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "pct_change",
+                  "displayName": "% Change",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 18,
+            "width": 12,
+            "height": 9
+          }
+        },
+        {
+          "widget": {
+            "name": "6882269c",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c5c49ff5",
+                  "fields": [
+                    {
+                      "name": "Date",
+                      "expression": "`Date`"
+                    },
+                    {
+                      "name": "Avg Price",
+                      "expression": "`Avg Price`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "frame": {
+                "title": "Daily Avg Price (OHLC)",
+                "showTitle": true
+              },
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "Date",
+                  "displayName": "Date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "Avg Price",
+                        "displayName": "Avg Price"
+                      }
+                    ]
+                  },
+                  "secondary": {
+                    "fields": []
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 27,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "73805993",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c5c49ff5",
+                  "fields": [
+                    {
+                      "name": "Date",
+                      "expression": "`Date`"
+                    },
+                    {
+                      "name": "High",
+                      "expression": "`High`"
+                    },
+                    {
+                      "name": "Low",
+                      "expression": "`Low`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Daily High vs Low Price",
+                "showTitle": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "Date",
+                  "displayName": "Date",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "High",
+                        "displayName": "High"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "Low",
+                        "displayName": "Low"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  }
+                },
+                "color": {
+                  "legend": {
+                    "position": "top"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "4cba1a0c",
+            "queries": [
+              {
+                "name": "1b9376d80e054c9f883ff9b01738f097",
+                "query": {
+                  "datasetName": "21c03390",
+                  "disaggregated": true
+                }
+              },
+              {
+                "name": "01f128d4f31d12ffb4e5e78fc9d064c3",
+                "query": {
+                  "datasetName": "e593ddcb",
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 0,
+              "dashboard_parameter_spec": {
+                "query_and_field_names": [
+                  {
+                    "query_name": "01f128d4f31d12ffb4e5e78fc9d064c3"
+                  }
+                ],
+                "query_and_parameter_keywords": [
+                  {
+                    "query_name": "1b9376d80e054c9f883ff9b01738f097",
+                    "keyword": "symbol_param"
+                  }
+                ],
+                "display_name": "symbol_param",
+                "control_type": "SINGLE_SELECT"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 33,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "e460e5fd",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "8fba07e7",
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {}
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 33,
+            "width": 6,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "f4aa21f6",
+      "displayName": "Weekly Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "a1a31273",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ef7d0491",
+                  "fields": [
+                    {
+                      "name": "week",
+                      "expression": "`week`"
+                    },
+                    {
+                      "name": "week_close",
+                      "expression": "`week_close`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Weekly OHLC Prices",
+                "showTitle": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "week",
+                  "displayName": "Week",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "week_close",
+                  "displayName": "Week Close",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "cc18d106",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "326798d2",
+                  "fields": [
+                    {
+                      "name": "week",
+                      "expression": "`week`"
+                    },
+                    {
+                      "name": "total_volume",
+                      "expression": "`total_volume`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Weekly Total Volume",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "week",
+                  "displayName": "Week",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "total_volume",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact"
+                  },
+                  "displayName": "Total Volume",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 18,
+            "width": 11,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "d74ef1f0",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "68aea563",
+                  "fields": [
+                    {
+                      "name": "total_turnover",
+                      "expression": "`total_turnover`"
+                    },
+                    {
+                      "name": "week",
+                      "expression": "`week`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Weekly Total Turnover",
+                "showTitle": true
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "total_turnover",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Total Turnover (Cr)"
+                },
+                "color": {
+                  "fieldName": "week",
+                  "displayName": "Week",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "0cd18bf0",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "adfaeecd",
+                  "fields": [
+                    {
+                      "name": "week",
+                      "expression": "`week`"
+                    },
+                    {
+                      "name": "avg_close",
+                      "expression": "`avg_close`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "frame": {
+                "title": "Weekly Avg Closing Price",
+                "showTitle": true
+              },
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "week",
+                  "displayName": "Week",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "avg_close",
+                        "displayName": "Avg Close"
+                      }
+                    ]
+                  },
+                  "secondary": {
+                    "fields": []
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 23,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "b2ee01a0",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ef7d0491",
+                  "fields": [
+                    {
+                      "name": "week",
+                      "expression": "`week`"
+                    },
+                    {
+                      "name": "week_open",
+                      "expression": "`week_open`"
+                    },
+                    {
+                      "name": "week_close",
+                      "expression": "`week_close`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Weekly Open vs Close Price",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "week",
+                  "displayName": "Week",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "week_open",
+                        "displayName": "Week Open"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "week_close",
+                        "displayName": "Week Close"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  }
+                },
+                "color": {
+                  "legend": {
+                    "position": "top"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "8c224266",
+      "displayName": "Monthly Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "b523823f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e105599d",
+                  "fields": [
+                    {
+                      "name": "month",
+                      "expression": "`month`"
+                    },
+                    {
+                      "name": "month_close",
+                      "expression": "`month_close`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Monthly OHLC Prices",
+                "showTitle": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "month",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "month_close",
+                  "displayName": "Month Close",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "a366e9a2",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "655685df",
+                  "fields": [
+                    {
+                      "name": "total_volume",
+                      "expression": "`total_volume`"
+                    },
+                    {
+                      "name": "month",
+                      "expression": "`month`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Monthly Total Volume",
+                "showTitle": true
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "total_volume",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Total Volume"
+                },
+                "color": {
+                  "fieldName": "month",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "1107f5bc",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "27ee08ca",
+                  "fields": [
+                    {
+                      "name": "Month",
+                      "expression": "`Month`"
+                    },
+                    {
+                      "name": "Avg_Close",
+                      "expression": "`Avg_Close`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Monthly Avg Closing Price",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Month",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "Avg_Close",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 2
+                    },
+                    "abbreviation": "none"
+                  },
+                  "displayName": "Avg Close",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 18,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "c8065aa1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e105599d",
+                  "fields": [
+                    {
+                      "name": "month",
+                      "expression": "`month`"
+                    },
+                    {
+                      "name": "month_open",
+                      "expression": "`month_open`"
+                    },
+                    {
+                      "name": "month_close",
+                      "expression": "`month_close`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Monthly Open vs Close Price",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "month",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "month_open",
+                        "displayName": "Month Open"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "month_close",
+                        "displayName": "Month Close"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  }
+                },
+                "color": {
+                  "legend": {
+                    "position": "top"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "10c14ac4",
+      "displayName": "Nifty Daily Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "ee6a31b3",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ee48affd",
+                  "fields": [
+                    {
+                      "name": "symbol",
+                      "expression": "`symbol`"
+                    },
+                    {
+                      "name": "date",
+                      "expression": "`date`"
+                    },
+                    {
+                      "name": "close",
+                      "expression": "`close`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Nifty Closing Price Trend",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "date",
+                  "displayName": "Date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "close",
+                  "displayName": "Close",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "symbol",
+                  "displayName": "Symbol",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 0,
+            "width": 11,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "a6be6e27",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ee48affd",
+                  "fields": [
+                    {
+                      "name": "date",
+                      "expression": "`date`"
+                    },
+                    {
+                      "name": "open",
+                      "expression": "`open`"
+                    },
+                    {
+                      "name": "high",
+                      "expression": "`high`"
+                    },
+                    {
+                      "name": "low",
+                      "expression": "`low`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Nifty Daily Summary",
+                "showTitle": true,
+                "showDescription": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "open"
+                    },
+                    {
+                      "fieldName": "high"
+                    },
+                    {
+                      "fieldName": "low"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 13,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "1df84220",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e6e329fb",
+                  "fields": [
+                    {
+                      "name": "symbol",
+                      "expression": "`symbol`"
+                    },
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "avg_open",
+                      "expression": "`avg_open`"
+                    },
+                    {
+                      "name": "avg_high",
+                      "expression": "`avg_high`"
+                    }
+                  ],
+                  "parameterValues": [
+                    {
+                      "keyword": "symbol_param",
+                      "selection": {
+                        "values": {
+                          "dataType": "STRING",
+                          "values": [
+                            {
+                              "value": "INFY"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Yearly Avg OHLC Summary",
+                "showTitle": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "symbol",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "year"
+                    },
+                    {
+                      "fieldName": "avg_open"
+                    },
+                    {
+                      "fieldName": "avg_high"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 19,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "b03458d6",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c1eba5fa",
+                  "fields": [
+                    {
+                      "name": "symbol",
+                      "expression": "`symbol`"
+                    },
+                    {
+                      "name": "year",
+                      "expression": "`year`"
+                    },
+                    {
+                      "name": "week",
+                      "expression": "`week`"
+                    },
+                    {
+                      "name": "week_open",
+                      "expression": "`week_open`"
+                    }
+                  ],
+                  "parameterValues": [
+                    {
+                      "keyword": "symbol_param",
+                      "selection": {
+                        "values": {
+                          "dataType": "STRING",
+                          "values": [
+                            {
+                              "value": "INFY"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Weekly OHLC by Symbol",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "symbol",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "year"
+                    },
+                    {
+                      "fieldName": "week"
+                    },
+                    {
+                      "fieldName": "week_open"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 25,
+            "width": 10,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "2cb810ba",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "adfaeecd",
+                  "fields": [
+                    {
+                      "name": "date",
+                      "expression": "`date`"
+                    },
+                    {
+                      "name": "avg_close_price",
+                      "expression": "`avg_close_price`"
+                    },
+                    {
+                      "name": "max_price",
+                      "expression": "`max_price`"
+                    },
+                    {
+                      "name": "min_price",
+                      "expression": "`min_price`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Nifty Daily Stats \n",
+                "showTitle": true
+              },
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "avg_close_price"
+                    },
+                    {
+                      "fieldName": "max_price"
+                    },
+                    {
+                      "fieldName": "min_price"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "0259931d",
+      "displayName": "Nifty Weekly Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "0cd99873",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c1eba5fa",
+                  "fields": [
+                    {
+                      "name": "symbol",
+                      "expression": "`symbol`"
+                    },
+                    {
+                      "name": "week",
+                      "expression": "`week`"
+                    },
+                    {
+                      "name": "week_close",
+                      "expression": "`week_close`"
+                    }
+                  ],
+                  "parameterValues": [
+                    {
+                      "keyword": "symbol_param",
+                      "selection": {
+                        "values": {
+                          "dataType": "STRING",
+                          "values": [
+                            {
+                              "value": "TCS"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Nifty Weekly Close Price Trend",
+                "showTitle": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "week",
+                  "displayName": "Week",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "week_close",
+                  "displayName": "Week Close",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "symbol",
+                  "legend": {
+                    "position": "top"
+                  },
+                  "displayName": "Symbol",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "891119cf",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c1eba5fa",
+                  "fields": [
+                    {
+                      "name": "week",
+                      "expression": "`week`"
+                    },
+                    {
+                      "name": "week_high",
+                      "expression": "`week_high`"
+                    },
+                    {
+                      "name": "week_low",
+                      "expression": "`week_low`"
+                    }
+                  ],
+                  "parameterValues": [
+                    {
+                      "keyword": "symbol_param",
+                      "selection": {
+                        "values": {
+                          "dataType": "STRING",
+                          "values": [
+                            {
+                              "value": "INFY"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Nifty Weekly High vs Low",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "week",
+                  "displayName": "Week",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "week_high",
+                        "displayName": "Week High"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "week_low",
+                        "displayName": "Week Low"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  }
+                },
+                "color": {
+                  "legend": {
+                    "position": "top"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "1dbcaf0a",
+      "displayName": "Nifty Monthly Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "2103092e",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a83da13f",
+                  "fields": [
+                    {
+                      "name": "symbol_month",
+                      "expression": "`symbol_month`"
+                    },
+                    {
+                      "name": "month_volume",
+                      "expression": "`month_volume`"
+                    }
+                  ],
+                  "parameterValues": [
+                    {
+                      "keyword": "symbol_param",
+                      "selection": {
+                        "values": {
+                          "dataType": "STRING",
+                          "values": [
+                            {
+                              "value": "TCS"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Nifty Monthly Total Volume Trend",
+                "showTitle": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "symbol_month",
+                  "displayName": "Symbol-Month",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "month_volume",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact"
+                  },
+                  "displayName": "Month Volume",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "12fc3084",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "50c9496a",
+                  "fields": [
+                    {
+                      "name": "avg_month_close",
+                      "expression": "`avg_month_close`"
+                    },
+                    {
+                      "name": "year_month",
+                      "expression": "`year_month`"
+                    }
+                  ],
+                  "parameterValues": [
+                    {
+                      "keyword": "symbol_param",
+                      "selection": {
+                        "values": {
+                          "dataType": "STRING",
+                          "values": [
+                            {
+                              "value": "TCS"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Monthly Avg Closing Price",
+                "showTitle": true
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "avg_month_close",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Avg Close Price"
+                },
+                "color": {
+                  "fieldName": "year_month",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 12,
+            "height": 7
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "fcbfdea6",
+      "displayName": "Price Spread & Monthly Avg",
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
